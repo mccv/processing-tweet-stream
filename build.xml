@@ -1,0 +1,173 @@
+<?xml version="1.0"?>
+<project name="processingLibs" default="build" basedir=".">
+  <description>
+        processingLibs. ant build file.
+    </description>
+  <property name="processing" location="/Applications/Processing.app/Contents/Resources/Java/libraries"/>
+  <property name="scala.home" value="/Users/mmcbride/packages/scala-2.7.6.final"/>
+
+  <property name="libraryClasspath" location="lib"/>
+  <property name="javaVersion" value="1.5"/>
+  <property name="author" value="Mark McBride"/>
+  <property name="copyright" value="(c) 2009"/>
+  <property name="libraryName" value="tweet_stream"/>
+  <property name="libraryNiceName" value="Tweet Stream"/>
+  <property name="versionNumber" value="0.1"/>
+  <property name="yourLink" value="http://www.github.com/mccv"/>
+  <property name="keywords" value="twitter, stream, text"/>
+  <property name="tested:platform" value="OSX"/>
+  <property name="tested:processingVersion" value="1.0.9"/>
+  <property name="tested:dependencies" value="?"/>
+  <property name="source:host" value="github"/>
+  <property name="source:url" value="http://www.github.com/mccv/processing-tweet-stream"/>
+  <property name="source:repository" value="http://www.github.com/mccv/processing-tweet-stream"/>
+  <!-- no changes or adjustments required below -->
+  <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+    <classpath>
+      <pathelement location="./resources/code/ant-contrib-1.0b3.jar"/>
+    </classpath>
+  </taskdef>
+  <property name="jarFile" value="${libraryName}.jar"/>
+  <property name="src" location="src/main/scala"/>
+  <property name="bin" location="bin"/>
+  <property name="reference" location="reference"/>
+  <property name="dist" location="distribution"/>
+
+  <target name="init">
+    <property name="scala-library.jar" value="${scala.home}/lib/scala-library.jar"/>
+    <path id="library-classpath">
+      <fileset dir="${libraryClasspath}" includes="*.jar"/>
+      <pathelement location="${scala.home}/lib/scala-compiler.jar"   />
+      <pathelement location="${scala-library.jar}"   />
+    </path>
+    <path id="build.classpath">
+      <pathelement location="${scala-library.jar}"/>
+      <!--<pathelement location="${your.path}"   />-->
+      <pathelement location="${build.dir}"/>
+    </path>
+    <taskdef resource="scala/tools/ant/antlib.xml">
+      <classpath>
+        <pathelement location="${scala.home}/lib/scala-compiler.jar"/>
+        <pathelement location="${scala-library.jar}"/>
+      </classpath>
+    </taskdef>
+    <echo>Properties initialized.
+  scala home            ${scala.home}
+  src path              ${src}
+  bin path              ${bin}
+  libraryClasspath      ${libraryClasspath}
+  processing Libraries  ${processing}
+  java version          ${javaVersion}
+	</echo>
+    <echo>building library ...</echo>
+    <!-- Create the time stamp -->
+    <tstamp>
+      <format property="date" pattern="MM/dd/yyyy" offset="0" unit="hour"/>
+    </tstamp>
+    <mkdir dir="${dist}"/>
+    <mkdir dir="${bin}"/>
+  </target>
+  <!-- compile the library -->
+  <target name="compile" depends="init" description="compile the source">
+    <scalac srcdir="${src}" destdir="${bin}">
+      <classpath>
+        <path refid="library-classpath"/>
+      </classpath>
+    </scalac>
+  </target>
+  <!-- build the distribution of the library -->
+  <target name="build" depends="compile" description="generate the distribution">
+    <!-- delete the previous content of the ${dist} folder -->
+    <delete dir="${dist}"/>
+    <!-- build the structure for ${dist} -->
+    <mkdir dir="${dist}"/>
+    <mkdir dir="${dist}/library"/>
+    <mkdir dir="${dist}/examples"/>
+    <mkdir dir="${dist}/reference"/>
+    <mkdir dir="${dist}/src"/>
+    <jar jarfile="${dist}/library/${jarFile}" basedir="${bin}"/>
+    <copy todir="${dist}/examples">
+      <fileset dir="examples"/>
+    </copy>
+    <copy todir="${dist}/src">
+      <fileset dir="src"/>
+    </copy>
+    <copy todir="${dist}/library">
+      <fileset dir="${libraryClasspath}"/>
+    </copy>
+    <copy toFile="${dist}/library/export.txt" file="resources/export.txt"/>
+    <copy overwrite="true" file="${scala-library.jar}" toFile="${dist}/library/scala-library.jar"   />
+    <copy overwrite="true" file="${scala.home}/lib/scala-compiler.jar" toFile="${dist}/library/scala-compiler.jar"   />
+    <!-- create the java reference of the library -->
+    <mkdir dir="${reference}"/>
+    <scaladoc bottom="processing library ${libraryNiceName} by ${author}. ${copyright}" destdir="${reference}"
+      stylesheetfile="resources/stylesheet.css" doctitle="ScalaDocs: ${libraryNiceName}" windowtitle="ScalaDocs: ${libraryNiceName}" srcdir="${src}">
+      <classpath>
+        <path refid="library-classpath"/>
+      </classpath>
+    </scaladoc>
+    <copy todir="${dist}/reference">
+      <fileset dir="${reference}"/>
+    </copy>
+    <!-- copy the jar file to processing's libraries -->
+    <mkdir dir="${processing}/${libraryName}"/>
+    <copy todir="${processing}/${libraryName}">
+      <fileset dir="${dist}"/>
+    </copy>
+    <!-- zip the distribution of the library -->
+    <zip destfile="${dist}/${libraryName}.zip" basedir="${dist}" excludes="**/_DS.Store"/>
+    <!-- <rename src="${dist}/${libraryName}.zip" dest="${dist}/${libraryName}_${versionNumber}.zip" /> -->
+    <!-- organize the ${dist} folder -->
+    <mkdir dir="${dist}/web"/>
+    <move todir="${dist}/web/reference">
+      <fileset dir="${dist}/reference"/>
+    </move>
+    <move todir="${dist}/web/examples">
+      <fileset dir="${dist}/examples"/>
+    </move>
+    <delete dir="${dist}/library"/>
+    <copy todir="${dist}/web">
+      <fileset dir="web"/>
+    </copy>
+    <!--
+  	format the index.html file. 
+  	regular expressions are used to parse the web index.html file. 
+  	key words starting and ending with ## are replaced by values 
+  	defined earlier in the beginning of this build file.
+  	-->
+    <replaceregexp file="${dist}/web/index.html" match="##yourLibrary##" replace="${libraryNiceName}" flags="g"/>
+    <replaceregexp file="${dist}/web/index.html" match="##author##" replace="${author}" flags="g"/>
+    <replaceregexp file="${dist}/web/index.html" match="##versionNumber##" replace="${versionNumber}" flags="g"/>
+    <replaceregexp file="${dist}/web/index.html" match="##yourLink##" replace="${yourLink}" flags="g"/>
+    <replaceregexp file="${dist}/web/index.html" match="##date##" replace="${date}" flags="g"/>
+    <replaceregexp file="${dist}/web/index.html" match="##keywords##" replace="${keywords}" flags="g"/>
+    <replaceregexp file="${dist}/web/index.html" match="##tested:platform##" replace="${tested:platform}" flags="g"/>
+    <replaceregexp file="${dist}/web/index.html" match="##tested:processingVersion##" replace="${tested:processingVersion}" flags="g"/>
+    <replaceregexp file="${dist}/web/index.html" match="##tested:dependencies##" replace="${tested:dependencies}" flags="g"/>
+    <replaceregexp file="${dist}/web/index.html" match="##source:host##" replace="${source:host}" flags="g"/>
+    <replaceregexp file="${dist}/web/index.html" match="##source:url##" replace="${source:url}" flags="g"/>
+    <replaceregexp file="${dist}/web/index.html" match="##source:repository##" replace="${source:repository}" flags="g"/>
+    <echo>---------------------</echo>
+    <antcall target="processExamples"/>
+    <echo>---------------------</echo>
+    <replaceregexp file="${dist}/web/index.html" match="##examples##" replace="" flags="g"/>
+    <!-- finish organizating library's distribution -->
+    <mkdir dir="${dist}/web/download"/>
+    <copy file="${dist}/${libraryName}.zip" todir="${dist}/web/download"/>
+    <copy todir="${processing}/${libraryName}/reference">
+      <fileset dir="${reference}"/>
+    </copy>
+    <!-- done, finished. -->
+    <echo>done, finished.</echo>
+  </target>
+  <!-- parsing the examples folder -->
+  <target name="processExamples">
+    <dirset id="examples.contents" dir="examples" excludes="*/*"/>
+    <property name="examples.list" refid="examples.contents"/>
+    <foreach list="${examples.list}" target="addExamples" param="exampleDir" delimiter=";">
+		</foreach>
+  </target>
+  <target name="addExamples">
+    <replaceregexp file="${dist}/web/index.html" match="(##examples##)" replace="&lt;li&gt;&lt;a href=&quot;examples/${exampleDir}/${exampleDir}.pde&quot;&gt;${exampleDir}&lt;/a&gt;&lt;/li&gt; \1" flags="g"/>
+  </target>
+</project>
