@@ -1,6 +1,4 @@
 /*
-  you can put a one sentence description of your library here.
-  
   (c) copyright
   
   This library is free software; you can redistribute it and/or

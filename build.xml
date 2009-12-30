@@ -96,6 +96,7 @@
       <fileset dir="${libraryClasspath}"/>
     </copy>
     <copy toFile="${dist}/library/export.txt" file="resources/export.txt"/>
+    <copy toFile="${dist}/LICENSE" file="LICENSE"/>
     <copy overwrite="true" file="${scala-library.jar}" toFile="${dist}/library/scala-library.jar"   />
     <copy overwrite="true" file="${scala.home}/lib/scala-compiler.jar" toFile="${dist}/library/scala-compiler.jar"   />
     <!-- create the java reference of the library -->
