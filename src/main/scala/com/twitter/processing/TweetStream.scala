@@ -102,7 +102,7 @@ class TweetStream(parent: PApplet, protocol: String, host: String, port: Int, pa
   /** how long to wait for a connection */
   var connectTimeoutMs = 10000;
   /** how long to wait for more input on the stream */
-  var socketTimeoutMs = 15000;
+  var socketTimeoutMs = 60000;
   // the HTTP client to use
   /** an Apache commons http client to use for communication */
   var client:DefaultHttpClient = _
