@@ -1,6 +1,5 @@
 /*
   (c) copyright
-  
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
   License as published by the Free Software Foundation; either
@@ -22,10 +21,10 @@ package com.twitter.processing
 import com.google.gson._
 
 /**
-* Methods to avoid the tedium of getting a value, checking to see if 
+* Methods to avoid the tedium of getting a value, checking to see if
 * it's null, and then performing some function on it.  Used like
 * <code>
-* ss(jsonObj, "foo") { 
+* ss(jsonObj, "foo") {
 *   myObj.foo = _
 * }
 * </code>

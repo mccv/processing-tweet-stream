@@ -11,7 +11,7 @@ void setup() {
   PFont font = loadFont("CharcoalCY-24.vlw");
   textFont(font, 24);
   // set up twitter stream object
-  TweetStream s = new TweetStream(this, "stream.twitter.com", 80, "1/statuses/sample.json", "your-twitter-user", "your-twitter-password");
+  TweetStream s = new TweetStream(this, "https", "stream.twitter.com", 443, "1/statuses/sample.json", "your-twitter-user", "your-twitter-password");
   s.go();
 }
 

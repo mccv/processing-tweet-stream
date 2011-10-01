@@ -1,6 +1,5 @@
 /*
   (c) copyright
-  
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
   License as published by the Free Software Foundation; either
@@ -57,25 +56,25 @@ trait Log {
 /**
  * Provides a Processing interface to the Twitter streaming API.
  * Note that this interface will <b>ONLY</b> work with JSON formatted streams.
- * 
+ *
  * @example SimpleStream
  * @author Mark McBride
- * 
+ *
  */
-class TweetStream(parent: PApplet, host: String, port: Int, path: String, username: String, password: String) extends Log{
+class TweetStream(parent: PApplet, protocol: String, host: String, port: Int, path: String, username: String, password: String) extends Log{
 
   /** the version of the library */
-	val VERSION = "0.1.0"
+	val VERSION = "0.2.0"
 	/** the full URI of the request */
-	val name = "http://" + host + ":" + port + "/" + path
+	val name = protocol + "://" + host + ":" + port + "/" + path
 
-  /** 
-   * A structural type that defines a tweet(status: Status) method.  
-   * If our parent conforms to this type we can call back to it 
+  /**
+   * A structural type that defines a tweet(status: Status) method.
+   * If our parent conforms to this type we can call back to it
    */
   type T = {def tweet(status: Status)}
-  /** 
-   * We'll attempt to cast parent and set callbackApplet.  
+  /**
+   * We'll attempt to cast parent and set callbackApplet.
    * If it stays null we don't callback.  Note that this
    * makes initializing a TweetStream object sorta pointless.
    */
@@ -89,7 +88,7 @@ class TweetStream(parent: PApplet, host: String, port: Int, path: String, userna
   var readLoopTimeMs = 0L
   /** how long we've spent disconnecting */
   var disconnectTimeMs = 0L
-  /** 
+  /**
    * how many idle probes we've received from the server.  These are empty
    * lines sent to keep the stream open.
    */
@@ -134,7 +133,7 @@ class TweetStream(parent: PApplet, host: String, port: Int, path: String, userna
   }
 
   /**
-   * Set up our HTTP connection parameters, 
+   * Set up our HTTP connection parameters,
    * and try to cast our parent to a callbackable form.
    */
   def setup() = {
@@ -200,7 +199,7 @@ class TweetStream(parent: PApplet, host: String, port: Int, path: String, userna
   /**
    * Try up to maxRecconnectTries times to connect, with exponentially
    * increasing backoff times (tries*tries*1000 ms)
-   */ 
+   */
   def reconnect() = {
     var tries = 1
     setup()
@@ -284,7 +283,7 @@ class TweetStream(parent: PApplet, host: String, port: Int, path: String, userna
 
   /**
    * If your callback is set, call tweet() on it.  Otherwise noop
-   */ 
+   */
   def deliver(tweet: String) = {
     // deliver the tweet
     //println("got tweet: %s", tweet)
@@ -299,7 +298,7 @@ class TweetStream(parent: PApplet, host: String, port: Int, path: String, userna
   }
 
   /**
-   * Read a line of input from the stream.  
+   * Read a line of input from the stream.
    * This line should either be a blank line (idle probe) or a full tweet
    * readLine will block until more data arrives. Not interruptable.
    */
