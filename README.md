@@ -5,10 +5,10 @@ within a Processing applet.
 
 # Building
 To build the library
-+ Download the source from github at http://github.com/mccv/processing-tweet-stream
-+ Edit the build.xml file to point the processing and scala.home properties to appropriate locations
-+ Run ant
-+ In your Processing project, select sketch -> import library -> Tweet Stream
+* Download the source from github at http://github.com/mccv/processing-tweet-stream
+* Edit the build.xml file to point the processing and scala.home properties to appropriate locations
+* Run ant
+* In your Processing project, select sketch -> import library -> Tweet Stream
 
 # Usage
 A simple example is included in examples/SimpleStream.  For more detailed information you can check out the

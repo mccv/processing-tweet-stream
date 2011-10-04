@@ -4,7 +4,7 @@
         processingLibs. ant build file.
     </description>
   <property name="processing" location="/Applications/Processing.app/Contents/Resources/Java/libraries"/>
-  <property name="scala.home" value="/Users/mmcbride/packages/scala-2.7.6.final"/>
+  <property name="scala.home" value="/Users/mmcbride/packages/scala-2.9.1.final"/>
 
   <property name="libraryClasspath" location="lib"/>
   <property name="javaVersion" value="1.5"/>
@@ -101,8 +101,9 @@
     <copy overwrite="true" file="${scala.home}/lib/scala-compiler.jar" toFile="${dist}/library/scala-compiler.jar"   />
     <!-- create the java reference of the library -->
     <mkdir dir="${reference}"/>
-    <scaladoc bottom="processing library ${libraryNiceName} by ${author}. ${copyright}" destdir="${reference}"
-      stylesheetfile="resources/stylesheet.css" doctitle="ScalaDocs: ${libraryNiceName}" windowtitle="ScalaDocs: ${libraryNiceName}" srcdir="${src}">
+    <scaladoc destdir="${reference}"
+      doctitle="ScalaDocs: ${libraryNiceName} by ${author}. ${copyright}"
+      srcdir="${src}">
       <classpath>
         <path refid="library-classpath"/>
       </classpath>
@@ -170,5 +171,9 @@
   </target>
   <target name="addExamples">
     <replaceregexp file="${dist}/web/index.html" match="(##examples##)" replace="&lt;li&gt;&lt;a href=&quot;examples/${exampleDir}/${exampleDir}.pde&quot;&gt;${exampleDir}&lt;/a&gt;&lt;/li&gt; \1" flags="g"/>
+  </target>
+  <target name="clean">
+    <delete dir="${dist}"/>
+    <delete dir="${reference}"/>
   </target>
 </project>
